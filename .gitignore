@@ -1,0 +1,9 @@
+*.swp
+*.pem
+*.DS_Store
+.awcache
+node_modules
+build
+data
+public
+tfjs-tsne
