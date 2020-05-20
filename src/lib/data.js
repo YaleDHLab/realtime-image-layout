@@ -4,9 +4,15 @@ import { PCA }  from 'ml-pca';
 import { app, cpuTsne } from '../index';
 
 const setStatus = s => {
+  var elem = document.querySelector('#status');
+  if (!s) {
+    elem.style.display = 'none';
+    return;
+  }
+  elem.style.display = 'block';
   var div = document.createElement('div');
   div.textContent = s;
-  var elem = document.querySelector('#status');
+
   if (elem.childElementCount > 9) {
     elem.removeChild(elem.childNodes[0]);
   }
@@ -37,49 +43,63 @@ export const getData = state => {
 **/
 
 const cellSize = 128;
-const maxImages = 1000;
+const maxImages = 500;
 const canvasSize = 4096;
-const defaultManifest = 'https://portail.biblissima.fr/iiif/manifest/ark:/43093/desc46a049ef1a1cfed3c4a9c932503ea8497b6ae21f';
+const defaultManifest = 'https://www.e-codices.unifr.ch/metadata/iiif/ubb-AN-II-0003/manifest.json';
 
 const load = async () => {
-  const url = defaultManifest;
+  let url = '';
+  if (window.location.href.includes('?manifest=')) {
+    url = window.location.href.split('?manifest=')[1];
+  } else {
+    const msg = 'Please provide a manifest parameter: ' + window.location.origin + '/#/?manifest=' + defaultManifest;
+    alert(msg);
+    url = defaultManifest;
+  }
   const manifest = await fetch(url).then(response => response.json())
-
   let urls = manifest.sequences[0].canvases.map(c => {
     return c.images[0].resource['@id'].replace('/full/full/', '/full/100,/')
   });
   urls = urls.slice(0, maxImages);
-
   const images = [];
-  urls.map(async url => {
-    let img = document.createElement('img');
-    img.crossOrigin = 'anonymous'; // tfjs-tsne needs crossorigin statement
-    img.onload = async () => {
-      const w = img.width;
-      const h = img.height;
-      // resize the image
-      const s = cellSize / h;
-      img.width = w * s;
-      img.height = h * s;
-      // vectorize the image
-      images.push(img);
-      setStatus(` * loaded ${images.length} of ${urls.length}`);
-      if (images.length == urls.length) vectorize(images);
+  let n = 0;
+  const onImageFinish = () => {
+    setStatus(` * loaded ${++n} of ${urls.length} images`);
+    if (n == urls.length) vectorize(images);
+  }
+  urls.map(url => {
+    try {
+      let img = document.createElement('img');
+      img.crossOrigin = 'anonymous'; // tfjs-tsne needs crossorigin statement
+      img.onload = () => {
+        const w = img.width;
+        const h = img.height;
+        // resize the image
+        const s = cellSize / h;
+        img.width = w * s;
+        img.height = h * s;
+        // vectorize the image
+        images.push(img);
+        onImageFinish();
+      }
+      img.src = url;
+    } catch (err) {
+      // catch stray 500 responses
+      onImageFinish();
     }
-    img.src = url;
   })
 }
 
 const vectorize = async images => {
   setStatus(' * loading mobilenet');
   const model = await mobilenet.load();
-  setStatus(' * vectorizing images');
+  setStatus(` * vectorizing ${images.length} images`);
   const vecs = await Promise.all(images.map(image => model.infer(image).data()));
 
   // run preliminary dimension reduction with PCA
-  console.log(' * running PCA');
+  setStatus(' * running PCA');
   const pca = new PCA(vecs);
-  const data = pca.predict(vecs, {nComponents: Math.min(50, vecs.length)}).data;
+  const data = pca.predict(vecs, {nComponents: Math.min(10, vecs.length)}).data;
 
   // render the images in the webgl scene
   setStatus(' * creating canvas');
@@ -123,7 +143,7 @@ const vectorize = async images => {
   app.points.material.needsUpdate = true;
 
   // run the tsne layout
-  console.log(' * running TSNE');
+  setStatus();
   cpuTsne(data);
 }
 
