@@ -52,7 +52,7 @@ const load = async () => {
   if (window.location.href.includes('?manifest=')) {
     url = window.location.href.split('?manifest=')[1];
   } else {
-    const msg = 'Please provide a manifest parameter: ' + window.location.origin + '/#/?manifest=' + defaultManifest;
+    const msg = '\nPlease provide a manifest parameter in the following format:\n\n' + window.location.href.split('/index.html')[0] + 'index.html' + '?manifest=' + defaultManifest;
     alert(msg);
     url = defaultManifest;
   }
