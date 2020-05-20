@@ -1,20 +1,14 @@
-# Realtime Layout
+# Realtime Image Layout
 
-Create TSNE or UMAP layouts with JavaScript in realtime
+Create TSNE or UMAP layouts of Images with JavaScript in realtime
 
 # Usage
 
 To use this boilerplate, you can run in a terminal:
 
 ```bash
-git clone https://github.com/yaledhlab/realtime-layout
+git clone https://github.com/yaledhlab/realtime-image-layout
 yarn install
-```
-
-To handle the multiple versions of tfjs used herein, one must then run:
-```bash
-cd node_modules/tfjs-core-0.14.3 && yarn install && yarn build-npm && cd ../../
-cd node_modules/tfjs-core-1.1.0  && yarn install && yarn build-npm && cd ../../
 ```
 
 Then one can start the server:
@@ -25,8 +19,4 @@ yarn start
 
 ## Demos
 
-UMAP.js: https://duhaime.s3.amazonaws.com/sketches/realtime-layout/umap/index.html
-
-TSNE.js: https://duhaime.s3.amazonaws.com/sketches/realtime-layout/tsne/index.html
-
-TFJS-TSNE.js: https://duhaime.s3.amazonaws.com/sketches/realtime-layout/tfjs-tsne/index.html
+https://duhaime.s3.amazonaws.com/sketches/realtime-image-layout/index.html?manifest=https://www.e-codices.unifr.ch/metadata/iiif/ubb-AN-II-0003/manifest.json
