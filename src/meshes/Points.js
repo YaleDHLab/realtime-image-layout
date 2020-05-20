@@ -20,7 +20,6 @@ export default class Points {
     attribute float dx;
     attribute float dy;
 
-    varying vec3 vColor;
     varying float vDx;
     varying float vDy;
 
@@ -32,7 +31,6 @@ export default class Points {
       gl_Position = projectionMatrix * mvPos;
       gl_PointSize = (pointScale / -mvPos.z);
       gl_PointSize = max(gl_PointSize, minPointScale);
-      vColor = color;
       vDx = dx;
       vDy = dy;
     }
@@ -45,7 +43,6 @@ export default class Points {
     uniform sampler2D texture;
 
     varying vec2 vUv;
-    varying vec3 vColor;
     varying float vDx;
     varying float vDy;
 
@@ -93,7 +90,7 @@ export default class Points {
       uniforms: {
         pointScale: {
           type: 'f',
-          value: (window.devicePixelRatio / 2) * 100,
+          value: (window.devicePixelRatio / 2) * 400,
         },
         minPointScale: {
           type: 'f',
