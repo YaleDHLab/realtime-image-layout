@@ -82,6 +82,9 @@ const load = async () => {
         images.push(img);
         onImageFinish();
       }
+      img.onerror = () => {
+        onImageFinish();
+      }
       img.src = url;
     } catch (err) {
       // catch stray 500 responses
