@@ -69,7 +69,7 @@ export class LayoutWorker {
   }
 
   postMessage(data) {
-    const path = window.location.href.replace('index.html', '');
+    const path = window.location.origin.replace('index.html', '') + '/';
     if (this.type == 'tsne') {
       this.worker.postMessage({
         data: data,
