@@ -21,7 +21,11 @@ export class App {
     this.stats = new Stats();
     this.stats.dom.id = 'stats';
     this.container.append(this.stats.dom);
-    this.controls = new TrackballControls(this.camera, this.renderer.domElement);
+    const controls = new TrackballControls(this.camera, this.renderer.domElement);
+    this.controls = controls;
+    this.controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
+    this.controls.mouseButtons.MIDDLE = THREE.MOUSE.ZOOM;
+    this.controls.mouseButtons.RIGHT = THREE.MOUSE.ROTATE;
     this.controls.target = new THREE.Vector3(0, 0, -1);
     window.addEventListener('resize', this.onResize.bind(this));
     this.render = this.render.bind(this);
